@@ -4,7 +4,7 @@ import Course from './components/Course';
 const App = () => {
   const course = {
     id: 1,
-    name: 'Half Stack application development',
+    name: 'Title',
     parts: [
       {
         name: 'Fundamentals of React',
