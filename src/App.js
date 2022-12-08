@@ -1,84 +1,37 @@
-import Persons from './components/Persons';
-import PersonForm from './components/PersonForm';
-import Filter from './components/Filter';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import axios from 'axios';
-
-
+import CountryList from './components/CountryList';
 
 const App = () => {
   
-  const [persons, setPersons] = useState([]);
-  const [newPerson, setNewPerson] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [newSearch, setNewSearch] = useState('');
-  // const [filtered, setFiltered] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [countrySearch, setCountrySearch] = useState('');
 
+  const searchBox = countrySearch ? countries.filter(({ name }) => name.common.toLowerCase().match(countrySearch.toLocaleLowerCase())) : '';
+
+  const searchCount = searchBox.length;
+  
   useEffect(() => {
-    axios.get(' http://localhost:3001/persons')
+    axios.get('https://restcountries.com/v3.1/all')
           .then(response => {
-            setPersons(response.data);
-          })
+            setCountries(response.data);
+          });
   }, []);
-     
- const filtered = newSearch ? persons.filter(({name}) => name.toLowerCase().match(newSearch.toLowerCase())) : persons;
 
-
-  const handleNewPerson = (event) => {
-    setNewPerson(event.target.value);
-  }
-
-  const handleNewNumber = (event) => {
-    setNewNumber(event.target.value);
-  }
 
   const handleSearch = (event) => {
-    setNewSearch(event.target.value);
+    setCountrySearch(event.target.value);
   }
-
-  
-  const addPerson = (event) => {
-    event.preventDefault();
-    
-    const matchExist = persons.find(({name}) => name === newPerson);
-    
-    if (matchExist != null) {
-      alert(`${newPerson} already in a list`);
-    }
-    else {
-      const personObject = {
-        name: newPerson,
-        number: newNumber,
-        id: persons.length + 1,
-      };
-      setPersons(persons.concat(personObject));
-      
-    }
-   
-    setNewPerson("");
-    setNewNumber("");
-  }
-
  
   
 
   return (
       <div>
-        <h2>Find list</h2>
-        
-           <Filter value={newSearch} handleChange={handleSearch} />
-
-         
-        <h2>Add New</h2>
-         <PersonForm formEvent={addPerson} personVal={newPerson} handlePerson={handleNewPerson} numberVal={newNumber} handleNumber={handleNewNumber}  />
-       
-        <h2>List</h2>
-        <Persons persons={filtered}/>
-        {/* <table>
-          <tbody>
-        { filtered.map(filter => <Person key={filter.id} person={filter}  /> )  }
-         </tbody>
-        </table> */}
+          <h2>Find List</h2>
+          <div>
+            <input value={countrySearch} onChange={handleSearch} />
+          </div>
+          <CountryList countries={searchBox} searchCount={searchCount} />
       </div> 
   )
 }
