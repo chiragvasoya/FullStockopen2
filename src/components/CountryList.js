@@ -1,4 +1,24 @@
+import { useState } from "react";
+import CountryShow from "./CountryShow";
+
 const CountryList = ({countries, searchCount}) => {
+
+    const [countryShow, setCountryShow] = useState(false);
+    const [countryData, setCountryData] = useState({});
+
+    const handleCountryShow = (e) => {
+      
+        let countryToShow = e.target.value;
+        countries.forEach(country => {
+            if (country.name.common === countryToShow) {
+                setCountryData(country);
+            }
+        });
+      
+        setCountryShow(true);
+   
+    }
+
     if (searchCount === 0) {
         return (
             <div>Enter values in searchbox.</div>
@@ -13,26 +33,20 @@ const CountryList = ({countries, searchCount}) => {
        
         return (
             <div>
-                { countries.map(country => <>
-                 <h3>{country.name.common}</h3>
-                <p>Capital: {country.capital}</p>
-                <h3>Languages: </h3>
-                <ul>
-                    { 
-                    //   Object.keys(country.languages).map(langauge => <li key={langauge}>{country.languages[langauge]}</li>)
-                      Object.values(country.languages).map((langauge, i) => <li key={i}>{langauge}</li>)
-                    }
-                </ul> 
-                <img src={country.flags.png} /> 
-                </>
-                )}
+                { countries.map((country, i) => <CountryShow key={'country'+i} country={country} /> )}
             </div>
         )
     }
     return (
+        <>
         <ul>
-        { countries.map(country => <li key={country.cca3}>{ country.name.common }</li> )  }
+        { countries.map(country => <>
+              <li key={country.cca3}>{ country.name.common }  <button onClick={handleCountryShow} value={country.name.common} >Show</button></li>
+             
+              </> )  }
       </ul>
+       <CountryShow country={countryShow ? countryData : false } /> 
+      </>
     )
 }
 
